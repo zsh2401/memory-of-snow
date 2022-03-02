@@ -8,7 +8,7 @@ jmp _boot
 %include "inc/int.inc"
 
 _boot:
-    call __init_registers
+    ; call __init_registers
 
     call __clear_screen
 

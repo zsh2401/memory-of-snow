@@ -1,3 +1,6 @@
 *.disk
 *.bin
 *.o
+bochs.log
+*.lock
+*.lst
