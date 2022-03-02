@@ -1,16 +1,5 @@
 STACK_INIT_ADDRESS: equ 0x9c00
 
-__init_registers:
-    xor ax, ax
-    ; mov bp, STACK_INIT_ADDRESS
-    mov ss, ax
-    mov ds, ax
-    mov sp, STACK_INIT_ADDRESS
-    
-    cld
-
-    ret
-
 __init_stack:
     mov bp, STACK_INIT_ADDRESS
     mov sp, bp

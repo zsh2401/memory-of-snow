@@ -1,35 +1,45 @@
-MBR_START: equ 0x7c00
-org MBR_START
+section mbr vstart=0x7c00
 jmp _boot
 
 %include "inc/fn.inc"
 %include "inc/print32.inc"
-%include "inc/screen.inc"
+%include "inc/biosfn.inc"
 %include "inc/int.inc"
 
 _boot:
-    ; call __init_registers
 
-    call __clear_screen
+    mov ax, cs
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    mov fs, ax
+    mov sp, 0x7c00
 
-    call __set_focus
+    call __bios_clear_screen
+
+    call __bios_set_focus
 
     mov si, _hello_msg
-    call _sprint    
+    mov di, _len
+    call __bios_print
 
-    sub sp, 4 ; two word
+    ; mov si, _hello_msg
+    ; call _sprint    
 
-    mov [bp], word 2H
-    mov [bp - 2], word 2H
+    ; sub sp, 4 ; two word
 
-    call __add
+    ; mov [bp], word 2H
+    ; mov [bp - 2], word 2H
 
-    mov [reg32], word ax
-    call _printreg32
+    ; call __add
 
-    hlt
+    ; mov [reg32], word ax
+    ; call _printreg32
+    
+    jmp $
 
-_hello_msg: db "Memory of Snow Operating System Kernel"
+_hello_msg: db "Memory of Snow Operating System Kernel."
+_len: equ $ - _hello_msg
 
 times 510-($-$$) db 0
 db 0x55,0xaa
