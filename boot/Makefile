@@ -3,4 +3,4 @@ bootsector.bin: bootsector.nasm ./inc/*.inc
 
 .PHONY: clean
 clean:
-	rm -rf *.bin *.o
+	rm bootsector.bin
