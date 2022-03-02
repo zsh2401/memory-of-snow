@@ -1,11 +1,11 @@
 image: mos.disk
 	@make -C ./boot
-	@dd if=boot/bootsector.bin of=mos.disk
+	@dd if=boot/bootsector.bin of=mos.disk bs=512 count=1 conv=notrunc
 	@file mos.disk
-	
-debug: image
-	@qemu-system-i386 mos.disk -S -s
 
+debug: image
+	bochs -f ./bochsrc
+	
 run: image
 	@qemu-system-i386 mos.disk
 
