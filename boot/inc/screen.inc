@@ -14,7 +14,7 @@ _screen_cursor_pos: dd 0
 
 _numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
 _char_buffer: db "A",0
-
+_zero: db "0", 0
 ; initialize screen api
 _screen_init:
     call _screen_clear
@@ -113,9 +113,14 @@ _screen_print_num:
     push si
     push di
 
-
+    ; temporary fix: can not print zero
     cmp ax, 0
+    mov si, _zero
+    call _screen_print_str
     je _screen_print_num_goback
+
+    cmp bx, 0
+    ; je _screen_print_num_goback
 
     mov dx, 0
    

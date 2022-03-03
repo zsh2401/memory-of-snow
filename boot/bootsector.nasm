@@ -21,7 +21,7 @@ _boot:
 
     call _screen_init
 
-    mov si, 0xfe
+    mov si, 0x0
     mov di, 16
     call _screen_print_num
 
@@ -29,7 +29,7 @@ _boot:
     mov ax, LOADER_BASE_ADDR
     mov word [bp + 16], ax  ;   address
     mov word [bp + 8], 1   ;   sector count
-    mov word [bp], 2      ;   sector number
+    mov word [bp], LOADER_START_SECTOR      ;   sector number
 
     mov si, bp
     call _disk_read_sector
