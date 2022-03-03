@@ -4,11 +4,11 @@ MBR_START_ADDRESS: equ 0x7c00
 org MBR_START_ADDRESS
 jmp _boot
 
-; %include "inc/biosfn.inc"
 %include "inc/screen.inc"
 _boot:
 
     ; initialize registers
+    xor ax, ax
     mov ax, cs
     mov ds, ax
     mov es, ax
@@ -21,7 +21,6 @@ _boot:
     ; print informations
     mov si, _bootsector_title
     call _screen_print_str
-
     call _screen_newline
 
     mov si, 255
@@ -30,7 +29,7 @@ _boot:
 
     jmp $
 
-_bootsector_title: db "Memory of Snow OS V1", 0
+_bootsector_title: db "Memory of Snow OS is booting now...", 0
 ; _len: equ $ - _hello_msg
 
 times 510-($-$$) db 0
