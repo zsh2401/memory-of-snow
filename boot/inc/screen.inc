@@ -12,8 +12,8 @@ VGA_WIDTH: equ 80
 
 _screen_cursor_pos: dd 0
 
-_numstr: db "0123456789abcdefghijklmnopqrstuvwxyz"
-_char_buffer: db "A", 0
+_numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
+_char_buffer: db "A",0
 
 ; initialize screen api
 _screen_init:
@@ -124,15 +124,12 @@ _screen_print_num:
     mov si, ax
     call _screen_print_num
 
-    cmp dx, 9
-    jg _screen_print_num_tob10
-    add dx, 48
-    jmp _screen_print_num_p
-    _screen_print_num_tob10:
-    add dx, 87
+    ; mov si, ax
+    mov bx, _numstr
+    add bx, dx
+    mov bx, [bx]
 
-    _screen_print_num_p:
-    mov [_char_buffer], dx
+    mov [_char_buffer], bl
     mov si, _char_buffer
     call _screen_print_str
 

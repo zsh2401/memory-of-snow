@@ -17,21 +17,22 @@ _boot:
     mov ss, ax
     mov fs, ax
     mov sp, MBR_START_ADDRESS
-    
+    mov bp, sp
+
     call _screen_init
+
+    mov si, 0xfe
+    mov di, 16
+    call _screen_print_num
 
     sub sp, 24
     mov ax, LOADER_BASE_ADDR
     mov word [bp + 16], ax  ;   address
     mov word [bp + 8], 1   ;   sector count
-    mov word [bp], 1       ;   sector number
+    mov word [bp], 2      ;   sector number
 
-    mov ax, bp
-    mov si, ax
+    mov si, bp
     call _disk_read_sector
-    
-    ; mov si, msg
-    ; call _screen_print_str
 
     jmp $
 
