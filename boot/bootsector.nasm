@@ -4,7 +4,9 @@ MBR_START_ADDRESS: equ 0x7c00
 org MBR_START_ADDRESS
 jmp _boot
 
+%include "inc/boot.inc"
 %include "inc/screen.inc"
+%include "inc/disk.inc"
 _boot:
 
     ; initialize registers
@@ -18,19 +20,22 @@ _boot:
     
     call _screen_init
 
-    ; print informations
-    mov si, _bootsector_title
-    call _screen_print_str
-    call _screen_newline
+    sub sp, 24
+    mov ax, LOADER_BASE_ADDR
+    mov word [bp + 16], ax  ;   address
+    mov word [bp + 8], 1   ;   sector count
+    mov word [bp], 1       ;   sector number
 
-    mov si, 255
-    mov di, 16
-    call _screen_print_num
+    mov ax, bp
+    mov si, ax
+    call _disk_read_sector
+    
+    ; mov si, msg
+    ; call _screen_print_str
 
     jmp $
 
-_bootsector_title: db "Memory of Snow OS is booting now...", 0
-; _len: equ $ - _hello_msg
+; msg: db "Hello!",0
 
 times 510-($-$$) db 0
 db 0x55,0xaa

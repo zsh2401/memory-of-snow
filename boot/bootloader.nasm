@@ -2,7 +2,10 @@
 org LOADER_BASE_ADDR
 
 jmp __bootloader
+
 %include "inc/screen.inc"
+%include "inc/screenadv.inc"
+%include "inc/disk.inc"
 
 __bootloader:
     call _screen_newline
