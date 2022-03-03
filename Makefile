@@ -14,6 +14,6 @@ mos.disk:
 	
 .PHONY: clean
 clean:
-	rm -f mos.disk mos.disk.lock bochs.log
+	rm -f mos.disk mos.disk.lock bochs.log mos.img
 	make -C ./boot clean
 	
