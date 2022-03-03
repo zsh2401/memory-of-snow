@@ -241,10 +241,6 @@ _screen_print_num:
     mov si, _char_buffer
     call _screen_print_str
 
-
-    
-
-
     _screen_print_num_goback:
     pop di
     pop si
