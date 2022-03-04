@@ -6,54 +6,60 @@
 ; esi:0x10 [64 bit buffer address]
 ;
 _disk_read_sector:
+    pushf
     pushad
 
     mov ebx, esi        ; save arguments
 
-    ; mov byte ax, [ebx + 16]
-    ; mov si, ax
-    ; mov di, 10
-    ; call _screen_print_num
+    ; address       :           [ebx - 16]
+    ; sector count  :           [ebx - 8]
+    ; sector no.    :           [ebx]
 
     xor eax, eax
-
+   
     ; set count
     mov dx, 0x1f2
-    mov byte al, [ebx + 8]
+    mov byte al, [ebx - 8]
     out dx, al
+
+    mov eax, [ebx]
 
     ; set LBA address
     
     ; 7 ~ 0 bit of LBA
     mov dx, 0x1f3
-    mov byte al, [ebx]
     out dx, al
 
-    mov si, 0x1ecb
-    mov di, 16
-    call _screen_print_num
+    
 
     ; 15 ~ 8 bit of LBA
+    mov cl, 8
+    shr eax, cl
     mov dx, 0x1f4
-    mov byte al, [ebx + 1]
     out dx, al
 
     ; 23 ~ 16 bit of LBA
+    shr eax, cl
     mov dx, 0x1f5
-    mov byte al, [ebx + 2]
     out dx, al
 
     ; 24 ~ 27 bit of LBA
-    mov dx, 0x1f6   
-
-    mov byte al, [ebx + 3]  ; get last part of lba address
+    shr eax, cl
     and al, 0x0f    ; remove useless bits
     or al, 0xe0     ; set 7 ~ 4 as 1110 for lba mode
+    mov dx, 0x1f6
+    out dx, al
+
+    ; mov si, about_to_read
+    ; call _screen_print_str
 
     ; set read command
     mov dx, 0x1f7
     mov al, 0x20
     out dx, al
+
+    ; mov si, reading
+    ; call _screen_print_str
 
     ; check status of disk
     .not_ready:
@@ -64,37 +70,38 @@ _disk_read_sector:
     cmp al, 0x08    
     jnz .not_ready  ; wait if not ready
 
+    ; mov si, haveread
+    ; call _screen_print_str
+
     ; start read
 
     ; calculate total read counts
-    mov word ax, [ebx + 0x08]   ; ax:   sector count
+    mov word ax, [ebx - 8]   ; ax:   sector count
     mov dx, 256
     mul dx                 ; times = ax * 256
     mov cx, ax  ; 256 times per sector.
                 ; read two bytes per time and one sector contains 
                 ; 512 bytes
 
-    mov dx, 0x1f0   ; read command
-    mov bx, word [ebx + 16] ; a.k.a 0x10
+    mov dx, 0x1f0               ; read command
+    mov bx, word [ebx - 16]     ; set address
 
     .go_on_read:
-    in ax, dx       ; read two bytes from port 0x1f0
+    in ax, dx                   ; read two bytes from port 0x1f0
 
-    ; mov si, ax
-    ; mov di, 16
-    ; call _screen_print_num
+    mov si, ax
+    mov di, 16
+    call _screen_print_num
 
     mov word [bx], ax
-    add word [bx], 2
-
-    
+    add word bx, 2
 
     loop .go_on_read
 
-    ; mov si, cx
-    ; call _screen_print_num
-
     popad
+    popf
     ret
 
-read: db "read",0
+about_to_read: db "will read",0
+reading: db "reading",0
+haveread: db "have read",0

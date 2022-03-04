@@ -5,3 +5,4 @@ bochs.log
 *.lock
 *.lst
 *.img
+*.out

@@ -21,7 +21,7 @@ _screen_init:
 ;si = delta
 _screen_move_cursor:
     pushf
-    pusha
+    pushad
 
     mov ax, [_screen_cursor_pos]
     add ax, si
@@ -34,14 +34,14 @@ _screen_move_cursor:
     pop si
 
 
-    popa
+    popad
     popf
     ret
 
 ; input si = pos
 _screen_set_cursor_since:
     pushf
-    pusha
+    pushad
 
     xor ax, ax
     mov bx, si
@@ -65,13 +65,13 @@ _screen_set_cursor_since:
 
     mov word [_screen_cursor_pos], bx
 
-    popa
+    popad
     popf
     ret
 
 ; clear everything on screen.
 _screen_clear:
-    pusha
+    pushad
     push gs
 
     mov ax, VMEM_ADDRESS
@@ -93,7 +93,7 @@ _screen_clear:
     call _screen_set_cursor_since
 
     pop gs
-    popa
+    popad
     ret
 
 ; si:   v
@@ -103,46 +103,29 @@ _screen_print_num:
     pushf
 
     mov ax, si
-    xor dx, dx
     mov bx, di
 
-    push si
+    push si         ; save registers
     push di
-    
-    cmp ax, 0
-    je .end
 
-    idiv bx
-
-    cmp ax, 0
-    jne .callhell
-    mov bx, _numstr
-    add bx, dx
     xor dx, dx
-    mov byte dl, [bx]
-    
-    mov [_char_buffer], dl
-    mov si, _char_buffer
-    call _screen_print_str
-    jmp .next
-    
-    .callhell
+    idiv bx         ; ax:dx(number) / bx(d) = ax...dx
+
+    cmp ax, 0
+    je .print
+
     mov si, ax
     mov di, bx
     call _screen_print_num
 
-    .next
-    ; mov si, ax
+    .print:
     mov bx, _numstr
     add bx, dx
-    xor dx, dx
     mov byte dl, [bx]
     
     mov [_char_buffer], dl
     mov si, _char_buffer
     call _screen_print_str
-
-    .end:
 
     pop di
     pop si
@@ -154,7 +137,7 @@ _screen_print_num:
 ; put string to the cursor position and move cursor.
 _screen_print_str: 
     pushf
-    pusha
+    pushad
     push gs
     push si
 
@@ -189,11 +172,10 @@ _screen_print_str:
    
     pop si
     pop gs
-    popa
+    popad
     popf
     ret
 
 _screen_cursor_pos: dd 0
 _numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
 _char_buffer: db "A",0
-_zero: db "0", 0
