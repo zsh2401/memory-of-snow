@@ -29,6 +29,10 @@ _disk_read_sector:
     mov byte al, [ebx]
     out dx, al
 
+    mov si, 0x1ecb
+    mov di, 16
+    call _screen_print_num
+
     ; 15 ~ 8 bit of LBA
     mov dx, 0x1f4
     mov byte al, [ebx + 1]
@@ -76,9 +80,9 @@ _disk_read_sector:
     .go_on_read:
     in ax, dx       ; read two bytes from port 0x1f0
 
-    mov si, ax
-    mov di, 16
-    call _screen_print_num
+    ; mov si, ax
+    ; mov di, 16
+    ; call _screen_print_num
 
     mov word [bx], ax
     add word [bx], 2

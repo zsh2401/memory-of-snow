@@ -1,4 +1,4 @@
-MSTACK_ADDRESS: equ 0x9c00
+MSTACK_ADDRESS: equ 0xfc00
 MBR_START_ADDRESS: equ 0x7c00
 
 org MBR_START_ADDRESS
@@ -21,18 +21,18 @@ _boot:
 
     call _screen_init
 
-    mov si, 0x0
-    mov di, 16
+    mov si, 12345
+    mov di, 10
     call _screen_print_num
 
-    sub sp, 24
-    mov ax, LOADER_BASE_ADDR
-    mov word [bp + 16], ax  ;   address
-    mov word [bp + 8], 1   ;   sector count
-    mov word [bp], LOADER_START_SECTOR      ;   sector number
+    ; sub sp, 24
+    ; mov ax, LOADER_BASE_ADDR
+    ; mov word [bp + 16], ax  ;   address
+    ; mov word [bp + 8], 1   ;   sector count
+    ; mov word [bp], LOADER_START_SECTOR      ;   sector number
 
-    mov si, bp
-    call _disk_read_sector
+    ; mov si, bp
+    ; call _disk_read_sector
 
     jmp $
 

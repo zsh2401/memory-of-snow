@@ -10,11 +10,7 @@ BLACK_ATTR: equ 0b0000_0111
 VMEM_SIZE: equ 4000 ;just for one screen, 4000 chars
 VGA_WIDTH: equ 80
 
-_screen_cursor_pos: dd 0
 
-_numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
-_char_buffer: db "A",0
-_zero: db "0", 0
 ; initialize screen api
 _screen_init:
     call _screen_clear
@@ -105,43 +101,51 @@ _screen_clear:
 _screen_print_num:
     pushad
     pushf
-    push bp
 
     mov ax, si
+    xor dx, dx
     mov bx, di
 
     push si
     push di
-
-    ; temporary fix: can not print zero
+    
     cmp ax, 0
-    mov si, _zero
+    je .end
+
+    idiv bx
+
+    cmp ax, 0
+    jne .callhell
+    mov bx, _numstr
+    add bx, dx
+    xor dx, dx
+    mov byte dl, [bx]
+    
+    mov [_char_buffer], dl
+    mov si, _char_buffer
     call _screen_print_str
-    je _screen_print_num_goback
-
-    cmp bx, 0
-    ; je _screen_print_num_goback
-
-    mov dx, 0
-   
-    idiv di
-
+    jmp .next
+    
+    .callhell
     mov si, ax
+    mov di, bx
     call _screen_print_num
 
+    .next
     ; mov si, ax
     mov bx, _numstr
     add bx, dx
-    mov bx, [bx]
-
-    mov [_char_buffer], bl
+    xor dx, dx
+    mov byte dl, [bx]
+    
+    mov [_char_buffer], dl
     mov si, _char_buffer
     call _screen_print_str
 
-    _screen_print_num_goback:
+    .end:
+
     pop di
     pop si
-    pop bp
     popf
     popad
     ret
@@ -188,3 +192,8 @@ _screen_print_str:
     popa
     popf
     ret
+
+_screen_cursor_pos: dd 0
+_numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
+_char_buffer: db "A",0
+_zero: db "0", 0
