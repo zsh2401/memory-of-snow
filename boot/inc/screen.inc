@@ -4,6 +4,8 @@
 ; Seymour Zhang <zsh2401@163.com>
 ; March 3, 2022
 
+%ifndef _SCREEN_API
+%define _SCREEN_API
 VMEM_ADDRESS: equ 0xb800
 FONT_ATTR: equ 0b0000_0111
 BLACK_ATTR: equ 0b0000_0111
@@ -179,3 +181,5 @@ _screen_print_str:
 _screen_cursor_pos: dd 0
 _numstr: db "0123456789abcdefghijklmnopqrstuvwxyz",0
 _char_buffer: db "A",0
+
+%endif

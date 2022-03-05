@@ -1,17 +1,13 @@
 ; bootsector of Memory of Snow OS
 ; Seymour Zhang <zsh2401@163.com>
 ; March 4, 2022
+%include "boot.inc"
 
-MBR_START_ADDRESS:      equ 0x7c00  ;   MBR start address
-END_OF_MBR:             equ 0x7e00  ;
-MSTACK_ADDRESS:         equ 0x9c00  ;   There are 17,000 byte for stack.  
+org MBR_START_ADDR
 
-org MBR_START_ADDRESS
 jmp _boot
-
-%include "inc/boot.inc"
-%include "inc/screen.inc"
-%include "inc/disk.inc"
+%include "screen.inc"
+%include "disk.inc"
 
 _boot:
 
@@ -22,21 +18,26 @@ _boot:
     mov es, ax
     mov ss, ax
     mov fs, ax
-    mov sp, MSTACK_ADDRESS
+    mov sp, MBR_STACK_ADDR
     mov bp, sp
     call _screen_init
 
     sub sp, 24
-    mov ax, LOADER_BASE_ADDR
 
-    mov word [bp - 16], ax  ;   address
-    mov word [bp - 8], 2   ;   sector count
+    ; load bootloader
+    mov ax, LOADER_BASE_ADDR
+    mov word [bp - 0x10], ax                  ;   address
+    mov word [bp - 0x08], LOADER_USED_SCTOR    ;   sector count
     mov word [bp], LOADER_START_SECTOR      ;   sector number
+   
+    ; mov si, _msg_loaded
+    ; call _screen_print_str
 
     mov si, bp
-    call _disk_read_sector
-    
+    call _disk_read_sectors
+
     jmp LOADER_BASE_ADDR
 
-times 510-($-$$) db 0
+_msg_loaded: db "Memory of Snow OS.",0
+times 510 -($-$$) db 0
 db 0x55,0xaa
