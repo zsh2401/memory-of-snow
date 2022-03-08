@@ -89,9 +89,6 @@ _disk_read_one_sector:
     .go_on_read:
     in ax, dx                       ; read two bytes per time
 
-    ; mov si, ax
-    ; mov di, 16
-    ; call _screen_print_num
 
     ; write to buffer
     mov word [bx], ax
@@ -122,11 +119,6 @@ _disk_read_sectors:
     mov ax, [bx]            ; number
     mov cx, [bx - 0x08]     ; count
     mov dx, [bx - 0x10]     ; destination address
-
-
-    mov si, cx
-    mov di, 10
-    call _screen_print_num
 
     .next_sector:
 

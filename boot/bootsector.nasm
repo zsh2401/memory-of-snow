@@ -30,14 +30,14 @@ _boot:
     mov word [bp - 0x08], LOADER_USED_SCTOR    ;   sector count
     mov word [bp], LOADER_START_SECTOR      ;   sector number
    
-    ; mov si, _msg_loaded
-    ; call _screen_print_str
-
     mov si, bp
     call _disk_read_sectors
 
+    mov si, _msg_loaded
+    call _screen_print_str
+
     jmp LOADER_BASE_ADDR
 
-_msg_loaded: db "Memory of Snow OS.",0
+_msg_loaded: db "MBR.",0
 times 510 -($-$$) db 0
 db 0x55,0xaa
