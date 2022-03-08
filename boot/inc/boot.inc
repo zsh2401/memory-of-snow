@@ -87,7 +87,7 @@ DESC_DATA_HIGH_32:    equ     (0x00 << 24) + DESC_G_4K + DESC_D_32 + \
 DESC_VIDEO_HIGH_32:   equ     (0x00 << 24) + DESC_G_4K + DESC_D_32 + \
     DESC_L_32 + DESC_AVL_FALSE + DESC_LIMIT_VIDEO2 + \
     DESC_P_IN + DESC_DPL_0 + DESC_S_DATA + \
-    DESC_TYPE_DATA + 0x00
+    DESC_TYPE_DATA + 0b1011
 
 ;---------Selector Attributes-------
 RPL0:           equ     0b00

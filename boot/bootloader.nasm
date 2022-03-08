@@ -68,9 +68,10 @@ __protected_mode:
     mov esi,    0
 
     mov ax,     SELECTOR_VIDEO
-    mov ebx,     0xb8000
+    mov gs,     ax
+    ; mov ebx,     0xb8000
 
-    mov byte [ebx],'A'
+    mov byte [gs:00],'P'
 
     jmp $
 
