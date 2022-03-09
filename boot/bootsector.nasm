@@ -38,6 +38,6 @@ _boot:
 
     jmp LOADER_BASE_ADDR
 
-_msg_loaded: db "MBR.",0
+_msg_loaded: db "Bootloader Loaded.",0
 times 510 -($-$$) db 0
 db 0x55,0xaa

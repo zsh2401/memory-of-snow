@@ -5,8 +5,8 @@
 ; March 7, 2022
 ;
 %include "boot.inc"
-
 org LOADER_BASE_ADDR
+
 jmp __bootloader
 
 GDT_BASE:   dd 0x00000000
@@ -32,8 +32,13 @@ SELECTOR_VIDEO: equ     (0b11 << 3) + TI_GDT + RPL0
 
 gdt_ptr:        dw  GDT_LIMIT
                 dd  GDT_BASE
-
+                
+%include "detect.inc"
+memsizekb:  dd 0
 __bootloader:
+
+    call _detect_get_mem64
+    mov [memsizekb], eax
     
     ; Entering Protected Mode
     ; Step 1. Enable A20
@@ -55,7 +60,7 @@ __bootloader:
     or al, 1
     mov cr0, eax
 
-    jmp dword  SELECTOR_CODE:__protected_mode
+    jmp dword   SELECTOR_CODE:__protected_mode
 
 [bits 32]
 __protected_mode:
@@ -71,7 +76,7 @@ __protected_mode:
     mov gs,     ax
     ; mov ebx,     0xb8000
 
-    mov byte [gs:00],'P'
+    mov byte [gs:160],'P'
 
     jmp $
 

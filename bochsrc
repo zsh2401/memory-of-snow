@@ -1,5 +1,5 @@
 boot: disk
-megs: 32
+megs: 64
 romimage: file=$BXSHARE/BIOS-bochs-latest, options=fastboot
 vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
 
