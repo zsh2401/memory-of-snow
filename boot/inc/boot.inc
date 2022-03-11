@@ -1,5 +1,8 @@
-; Bootstrapping related definition.
+%ifndef __BOOT_INC
+%define __BOOT_INC
 
+; Bootstrapping related definition.
+SECTOR_SIZE:            equ     512
 
 ;--------------bootsector related-------------
 MBR_START_ADDR:         equ     0x7c00
@@ -7,15 +10,37 @@ MBR_END_ADDR:           equ     MBR_START_ADDR + 512
 MBR_STACK_ADDR:         equ     MBR_END_ADDR + 128     
 
 ;--------------bootloader related-------------
-LOADER_USED_SCTOR:      equ     8
-LOADER_BASE_ADDR:       equ     MBR_STACK_ADDR +    10
-LOADER_END_ADDR:        equ     LOADER_BASE_ADDR +  512 * LOADER_USED_SCTOR
-LOADER_STACK_ADDR:      equ     LOADER_END_ADDR +   512
+LOADER_USED_SCTOR:      equ     10
+LOADER_BASE_ADDR:       equ     MBR_STACK_ADDR      +   20
+LOADER_END_ADDR:        equ     LOADER_BASE_ADDR    +   SECTOR_SIZE * LOADER_USED_SCTOR
+LOADER_STACK_ADDR:      equ     LOADER_END_ADDR     +   1024
 LOADER_START_SECTOR:    equ     0x02
 
-
 ;--------------kernel related-----------------
-; TODO
+PAGE_DIR_TABLE_ADDR:         equ     0x1_00000
+PAGE_DIR_SIZE:          equ     1024
+PAGE_ITEM_SIZE:         equ     4
+
+; Is certain memory page on the physical memory.
+PAGE_ITEM_P_YES:        equ     1 << 0
+PAGE_ITEM_P_NO:         equ     0 << 0
+
+PAGE_ITEM_RW_RW:        equ     1 << 1
+PAGE_ITEM_RW_RO:        equ     0 << 1
+
+; Permission
+PAGE_ITEM_US_USER:      equ     1 << 2
+PAGE_ITEM_US_SUPER:     equ     0 << 2
+
+; This features is disabled in MOS
+PAGE_ITEM_PWT_YES:      equ     1 << 3
+PAGE_ITEM_PWT_NO:       equ     0 << 3
+
+; This features is disabled in MOS
+PAGE_ITEM_PCD_ENABLE:   equ     1 << 4
+PAGE_ITEM_PCD_DISABLE:  equ     0 << 4
+
+PAGE_ITEM_PAT_DEFAULT:  equ     0 << 7
 
 ;--------------GDT----------------------------
 
@@ -96,3 +121,5 @@ RPL2:           equ     0b10
 RPL3:           equ     0b11
 TI_GDT:         equ     0b0 << 2
 TI_LDT:         equ     0b1 << 2
+
+%endif

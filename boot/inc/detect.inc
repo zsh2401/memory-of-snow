@@ -39,7 +39,7 @@ _detect_get_mem32:
     xor eax, eax
 
     mov eax, 0XE801
-    int 0x15
+    int 0x15    ;   interrupt
     
     mov [ebp - 4], eax
     mov eax,    ebx

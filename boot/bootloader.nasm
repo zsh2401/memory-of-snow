@@ -1,5 +1,7 @@
-; The BootLoader's duty is switch CPU into the protected mode
-; and load the 32bit kernel code.
+; The BootLoader's duty is to detect 
+; hardware information, to switch CPU into 
+; the protected mode and to load the 32bit 
+; kernel code.
 ;
 ; Seymour Zhang <zsh2401@163.com>
 ; March 7, 2022
@@ -63,6 +65,7 @@ __bootloader:
     jmp dword   SELECTOR_CODE:__protected_mode
 
 [bits 32]
+%include "paging.inc"
 __protected_mode:
     mov ax,     SELECTOR_DATA
     mov ds,     ax
@@ -74,9 +77,34 @@ __protected_mode:
 
     mov ax,     SELECTOR_VIDEO
     mov gs,     ax
-    ; mov ebx,     0xb8000
 
-    mov byte [gs:160],'P'
+    mov byte [gs:160], 'P'
+
+    ;Enable memory paging mode.
+
+    ; setup page
+    mov edi, PAGE_DIR_TABLE_ADDR
+    call _paging_init0
+
+    sgdt    [gdt_ptr]
+
+    mov ebx, [gdt_ptr + 2]
+    or dword [ebx + 0x18 + 4], 0xc000_0000
+
+    add dword [gdt_ptr + 2], 0xc000_0000
+    add esp, 0xc000_0000
+
+    mov eax, PAGE_DIR_TABLE_ADDR
+    mov cr3, eax
+
+    mov eax, cr0
+    or eax, 1 << 31
+    mov cr0, eax
+
+    mov byte [gs:320], 'V'
+
+
+    lgdt [gdt_ptr]
 
     jmp $
 

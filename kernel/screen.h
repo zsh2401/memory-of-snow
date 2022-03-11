@@ -1,14 +1,20 @@
 #ifndef __SCREEN_H
 #define __SCREEN_H
-#include "kstring.h"
-#include "bool.h"
+#include "mos.h"
+
 void Screen_Init();
 void Screen_Clear();
 
-int32_t Screen_GetLineWidth();
-uint32_t Screen_GetCursorPosition();
+uint32_t Screen_GetLineWidth();
 
-void Screen_SetCursorPosition(uint32_t abs);
+/**
+ * @brief 
+ * 
+ * @param newValue negative value will be ignorant.
+ * @return uint32_t current positon
+ */
+uint32_t Screen_CursorPosition(int32_t newValue);
+
 void Screen_Write(kstring_t str);
 
 void Screen_MoveCursor(int32_t delta);

@@ -6,3 +6,4 @@ bochs.log
 *.lst
 *.img
 *.out
+newdev
