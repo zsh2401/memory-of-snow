@@ -31,10 +31,10 @@ _paging_init0:
     mov eax, [ebp - 4]          ; get the address of page dir table
     mov [ebx + 4092], eax       ; last pde is the address of dir table.
 
-.create_kernel_entry:
+; 创建内核空间映射
     mov ebx, [ebp - 4]
     add ebx, 0x1000
-    mov ecx, 256
+    mov ecx, 256 
     mov esi, 0
     mov edx, PAGE_ITEM_US_USER | PAGE_ITEM_RW_RW | PAGE_ITEM_P_YES
 
@@ -45,7 +45,6 @@ _paging_init0:
     loop .create_kernel_entry_loop
 
 ; 创建剩余内核空间页目录项 [769, ... ,1022]
-.create_pte:
     mov ecx, 254    ; without 768 and 1023, so 256 - 2
     mov eax, [ebp - 4]
     add eax, 0x2000 ; the second page table offset
