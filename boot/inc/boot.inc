@@ -4,22 +4,26 @@
 ; Bootstrapping related definition.
 SECTOR_SIZE:            equ     512
 
+BOOTING_STACK_ADDR:     equ     0x7fff
+
 ;--------------bootsector related-------------
-MBR_START_ADDR:         equ     0x7c00
-MBR_END_ADDR:           equ     MBR_START_ADDR + 512 
-MBR_STACK_ADDR:         equ     MBR_END_ADDR + 128     
+MBR_BASE_ADDR:          equ     0x7c00
 
 ;--------------bootloader related-------------
-LOADER_USED_SCTOR:      equ     10
-LOADER_BASE_ADDR:       equ     MBR_STACK_ADDR      +   20
-LOADER_END_ADDR:        equ     LOADER_BASE_ADDR    +   SECTOR_SIZE * LOADER_USED_SCTOR
-LOADER_STACK_ADDR:      equ     LOADER_END_ADDR     +   1024
+LOADER_USED_SCTOR:      equ     16
+LOADER_BASE_ADDR:       equ     0x8000
 LOADER_START_SECTOR:    equ     0x02
 
 ;--------------kernel related-----------------
-PAGE_DIR_TABLE_ADDR:         equ     0x1_00000
-PAGE_DIR_SIZE:          equ     1024
-PAGE_ITEM_SIZE:         equ     4
+KERNEL_USED_SECTOR:     equ     2048
+KERNEL_START_SECTOR:    equ     20
+KERNEL_BIN_SIZE:        equ     1 * 1024 * 1024    ; 1MB
+KERNEL_BIN_ADDR:        equ     0x20000
+KERNEL_STACK_ADDR:      equ     0x1FFFF
+KERNEL_BASE_ADDR:       equ     0xA000
+
+;--------------paing related------------------
+PAGE_DIR_TABLE_ADDR:    equ     0x30000
 
 ; Is certain memory page on the physical memory.
 PAGE_ITEM_P_YES:        equ     1 << 0

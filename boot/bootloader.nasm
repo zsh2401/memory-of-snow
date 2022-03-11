@@ -71,7 +71,7 @@ __protected_mode:
     mov ds,     ax
     mov es,     ax
     mov ss,     ax
-    mov esp,    LOADER_STACK_ADDR
+    mov esp,    BOOTING_STACK_ADDR
     mov ebp,    esp
     mov esi,    0
 
@@ -86,8 +86,10 @@ __protected_mode:
     mov edi, PAGE_DIR_TABLE_ADDR
     call _paging_init0
 
+    ; Unload GDT
     sgdt    [gdt_ptr]
 
+    ; Find the 
     mov ebx, [gdt_ptr + 2]
     or dword [ebx + 0x18 + 4], 0xc000_0000
 

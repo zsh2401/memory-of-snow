@@ -6,7 +6,7 @@
 
 
 ; esi:  address of arguments
-;
+; 
 ; esi:0x00 [64 bit sector number]
 ; esi:0x08 [64 bit buffer address]
 _disk_read_one_sector:
@@ -25,7 +25,7 @@ _disk_read_one_sector:
     out dx, al
 
     ; get LBA
-    mov eax, [bx]
+    mov eax, [ebx]
 
     ; set LBA address
     
@@ -72,27 +72,18 @@ _disk_read_one_sector:
 
     ; start read
 
-    ; calculate total read counts
-    ; mov word ax, [bx - 8]   ; ax:   sector count
-    ; mov dx, 256
-    ; mul dx                 ; times = ax * 256
-    ; mov cx, ax  ; 256 times per sector.
-    ;             ; read two bytes per time and one sector contains 
-    ;             ; 512 bytes
-
-
     mov cx, 256     ; one sector contains 512 bytes, read two bytes per time.
 
     mov dx, 0x1f0                   ; read command
-    mov bx, word [bx - 8]           ; set address
+    mov word ebx, [ebx - 8]           ; set address
 
     .go_on_read:
     in ax, dx                       ; read two bytes per time
 
 
     ; write to buffer
-    mov word [bx], ax
-    add word bx, 2
+    mov word [ebx], ax
+    add ebx, 2
 
     loop .go_on_read
 
@@ -114,18 +105,18 @@ _disk_read_sectors:
 
     sub esp, 16
 
-    xor ax, ax
+    xor eax, eax
 
-    mov ax, [bx]            ; number
-    mov cx, [bx - 0x08]     ; count
-    mov dx, [bx - 0x10]     ; destination address
+    mov word ax, [ebx]            ; number
+    mov word cx, [ebx - 0x08]     ; count
+    mov word dx, [ebx - 0x10]     ; destination address
 
     .next_sector:
 
-    mov [bp], ax            ;   number
-    mov [bp - 8], dx        ;   addr
-    mov si, bp
+    mov word [ebp], ax            ;   number
+    mov word [ebp - 8], dx        ;   addr
 
+    mov esi, ebp
     call _disk_read_one_sector
     
     inc ax

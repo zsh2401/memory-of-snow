@@ -3,7 +3,7 @@
 ; March 4, 2022
 %include "boot.inc"
 
-org MBR_START_ADDR
+org MBR_BASE_ADDR
 
 jmp _boot
 %include "screen.inc"
@@ -18,26 +18,30 @@ _boot:
     mov es, ax
     mov ss, ax
     mov fs, ax
-    mov sp, MBR_STACK_ADDR
+    mov sp, BOOTING_STACK_ADDR
     mov bp, sp
+
     call _screen_init
 
-    sub sp, 24
+
+    enter 24, 0
 
     ; load bootloader
     mov ax, LOADER_BASE_ADDR
-    mov word [bp - 0x10], ax                  ;   address
-    mov word [bp - 0x08], LOADER_USED_SCTOR    ;   sector count
-    mov word [bp], LOADER_START_SECTOR      ;   sector number
+    mov word [ebp - 24], ax                         ;   address
+    mov word [ebp - 16], LOADER_USED_SCTOR          ;   sector count
+    mov word [ebp - 8], LOADER_START_SECTOR         ;   sector number
    
-    mov si, bp
+    mov esi, ebp
+    sub esi, 8
     call _disk_read_sectors
 
-    mov si, _msg_loaded
+    mov si, MBR_MSG
     call _screen_print_str
-
+ 
+    leave
     jmp LOADER_BASE_ADDR
 
-_msg_loaded: db "Bootloader Loaded.",0
+MBR_MSG:    dd "Booloader loaded."
 times 510 -($-$$) db 0
 db 0x55,0xaa
