@@ -18,12 +18,12 @@ LOADER_START_SECTOR:    equ     0x02
 KERNEL_USED_SECTOR:     equ     2048
 KERNEL_START_SECTOR:    equ     20
 KERNEL_BIN_SIZE:        equ     1 * 1024 * 1024    ; 1MB
-KERNEL_BIN_ADDR:        equ     0x20A000
-KERNEL_STACK_ADDR:      equ     0x209FFF
-KERNEL_BASE_ADDR:       equ     0xA000
+KERNEL_BIN_ADDR:        equ     0x2C0000
+KERNEL_STACK_ADDR:      equ     0x2BFFFF
+KERNEL_BASE_ADDR:       equ     0xC0000
 
 ;--------------paing related------------------
-PAGE_DIR_TABLE_ADDR:    equ     0x30A000
+PAGE_DIR_TABLE_ADDR:    equ     0x3C0000
 
 ; Is certain memory page on the physical memory.
 PAGE_ITEM_P_YES:        equ     1 << 0

@@ -1,6 +1,81 @@
-; create two-level page
-; edi: target address, must be the muplication of 4
+; Initializing page table
+; of Operating System.
+; It will setup 8MB space for kernel
 %include "boot.inc"
+_SETUP_PAGES:       equ         2
+_paging_init3:
+    enter 8,0
+
+    mov [ebp - 4], edi
+    mov ebx, edi
+
+    ;---------clear data------------
+    xor esi, esi
+    mov ecx, 4 * 1024   ; a.k.a 4096 byte
+    .clear:
+    mov byte [ebx + esi], 0
+    inc esi
+    loop .clear
+    ;--------------------------------
+
+    ;-------初始化一级页表-------------
+    xor esi, esi
+    mov ecx, _SETUP_PAGES
+
+    mov ebx, [ebp - 4]
+    mov eax, [ebp - 4]
+    add eax, 0x1000
+    or eax, PAGE_ITEM_P_YES | PAGE_ITEM_US_USER | PAGE_ITEM_RW_RW
+    
+    mov ebx, [ebp - 4]
+    mov [ebx + 4092], eax
+
+; 一层循环
+    .set1:
+    mov [ebx + esi * 4], eax
+    add esi, 768
+    mov [ebx + esi * 4], eax
+    sub esi, 768
+
+
+    ; ----------二层循环------------
+    ; esi: 一层循环次数
+    ; ecx: 一层循环计数器
+    ; eax: 页表地址与标志
+    ; ebx: 页目录表地址
+    push eax
+    push ecx
+    push ebx
+
+    mov ebx, eax
+    mov ecx, 1024
+    xor edi, edi    ; 计数器
+    shr ebx, 12     ; 清空标志位
+    shl ebx, 12     ; 得到页表地址
+
+    ; 计算起始地址
+    mov eax, esi
+    mov edx, 1024 * 1024 * 4
+    mul edx
+    or eax, PAGE_ITEM_P_YES | PAGE_ITEM_US_USER | PAGE_ITEM_RW_RW
+    .set2:
+    mov [ebx + 4 * edi], eax    ; 设置物理地址
+    add eax, 0x1000 ;a.k.a 4096 : size of one page
+    inc edi
+    loop .set2
+; ------------------------------
+
+    pop ebx
+    pop ecx
+    pop eax
+
+    add eax, 0x1000
+    inc esi
+    loop .set1
+
+    leave
+    ret
+
 _paging_init0:
     enter 4,0
 
@@ -8,20 +83,19 @@ _paging_init0:
     mov ebx, edi
     xor esi, esi
 
-    ; clear data
+    ;---------clear data------------
     mov ecx, 4 * 1024   ; a.k.a 4096 byte
-
-.clear:
+    .clear:
     mov byte [ebx + esi], 0
     inc esi
     loop .clear
+    ;--------------------------------
 
-.create_pde:
-   
-    mov ebx, [ebp - 4]
-    mov eax, [ebp - 4]
+    ;---------初始化一级页表------------
+    mov ebx, [ebp - 4]  ; get base addr
+    mov eax, [ebp - 4]  ; get base addr
 
-    add eax, 4 * 1024           ; the first two level table area
+    add eax, 4 * 1024   ; base addr + 4096 => first 
     mov edx, PAGE_ITEM_US_USER | PAGE_ITEM_RW_RW | PAGE_ITEM_P_YES
     or eax, edx
 
@@ -34,7 +108,7 @@ _paging_init0:
 ; 创建内核空间映射
     mov ebx, [ebp - 4]
     add ebx, 0x1000
-    mov ecx, 256 
+    mov ecx, 1024        ; 1MB * 10 
     mov esi, 0
     mov edx, PAGE_ITEM_US_USER | PAGE_ITEM_RW_RW | PAGE_ITEM_P_YES
 

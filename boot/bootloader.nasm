@@ -84,7 +84,7 @@ __protected_mode:
 
     ; setup page
     mov edi, PAGE_DIR_TABLE_ADDR
-    call _paging_init0
+    call _paging_init3
 
     ; Unload GDT
     sgdt    [gdt_ptr]
