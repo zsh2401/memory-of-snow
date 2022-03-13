@@ -66,6 +66,7 @@ __bootloader:
 
 [bits 32]
 %include "paging.inc"
+%include "pdisk32.inc"
 __protected_mode:
     mov ax,     SELECTOR_DATA
     mov ds,     ax
@@ -80,8 +81,13 @@ __protected_mode:
 
     mov byte [gs:160], 'P'
 
-    ;Enable memory paging mode.
+    call _setup_page
+    call _load_kernel
 
+    mov eax, $
+    jmp eax
+
+_setup_page:
     ; setup page
     mov edi, PAGE_DIR_TABLE_ADDR
     call _paging_init3
@@ -104,11 +110,26 @@ __protected_mode:
     mov cr0, eax
 
     mov byte [gs:320], 'V'
-
-
+    
     lgdt [gdt_ptr]
 
-    jmp $
+    ret
 
+; retruning:
+; eax:  the entry address of kernel
+_load_kernel:
+    enter 0,0
+
+    ; read kernel.bin from disk into buffer.
+    mov eax, KERNEL_START_SECTOR
+    mov ebx, KERNEL_BIN_ADDR
+    mov ecx, KERNEL_USED_SECTOR
+    call _pdisk32_read_sectors
+
+    ; parse kernel.bin and load it into kernel space.
+
+
+    leave
+    ret
 BOOTLOADER_HELLO:   db "Entering Protected Mode...", 0
 GDT_LOADED:         db "GDT Loaded.",0

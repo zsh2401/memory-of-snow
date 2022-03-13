@@ -12,6 +12,10 @@ typedef unsigned long long uint64_t;
 typedef uint32_t size_t;
 typedef uint32_t key_t;
 
+#define NULL_PTR 0
+#define NULL 0
+#define MOS_NULL 0
+
 #define KSTRING_EMPTY 0
 typedef char *kstring_t;
 

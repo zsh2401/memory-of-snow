@@ -15,7 +15,7 @@ LOADER_BASE_ADDR:       equ     0x8000
 LOADER_START_SECTOR:    equ     0x02
 
 ;--------------kernel related-----------------
-KERNEL_USED_SECTOR:     equ     2048
+KERNEL_USED_SECTOR:     equ     2048        ; 2048 * 512B = 1024KB = 1MB
 KERNEL_START_SECTOR:    equ     20
 KERNEL_BIN_SIZE:        equ     1 * 1024 * 1024    ; 1MB
 KERNEL_BIN_ADDR:        equ     0x2C0000

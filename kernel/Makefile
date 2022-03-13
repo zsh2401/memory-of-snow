@@ -5,6 +5,8 @@ LINEKR=ld
 LDFLAGS=-m elf_i386 -T kernel.ld 
 
 all:	kernel.bin
+	@ls -lh $^
+	@file $^
 kernel.bin: $(OBJECTS)
 	$(LINEKR) $(LDFLAGS) $^  -o $@
 %.o : %.c

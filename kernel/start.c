@@ -1,12 +1,24 @@
 #include "mos.h"
-struct KernelArgument
+#include "screen.h"
+#define KERNEL_ARGUMENT_ADDRESS 0xA000;
+typedef struct _KernelArgument
 {
-    size_t memorySizeKB;
-    size_t cpus;
-};
-void start(struct KernelArgument *a)
+    uint32_t ok; // should be 2401
+    uint32_t memorySizeKB;
+    uint32_t cpus;
+} KernelArgument;
+
+void MemoryOfSnowOSEntry(KernelArgument* a)
 {
-    uint32_t x = 0;
-    for (;;)
-        ;
+    /* data */
+    __asm("mov ax, 40h");
+}
+
+void start(void)
+{
+    KernelArgument *a = (KernelArgument*)KERNEL_ARGUMENT_ADDRESS
+    if(a->ok != 2401){
+        // OS kernel not loaded
+    }
+    MemoryOfSnowOSEntry(a);
 }

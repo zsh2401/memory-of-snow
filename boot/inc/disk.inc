@@ -7,8 +7,8 @@
 
 ; esi:  address of arguments
 ; 
-; esi:0x00 [64 bit sector number]
-; esi:0x08 [64 bit buffer address]
+; esi:  0x00 [64 bit sector number]
+; esi:  0x08 [64 bit buffer address]
 _disk_read_one_sector:
     pushad
 
@@ -51,16 +51,11 @@ _disk_read_one_sector:
     mov dx, 0x1f6
     out dx, al
 
-    ; mov si, about_to_read
-    ; call _screen_print_str
 
     ; set read command
     mov dx, 0x1f7
     mov al, 0x20
     out dx, al
-
-    ; mov si, reading
-    ; call _screen_print_str
 
     ; check status of disk
     .not_ready:
