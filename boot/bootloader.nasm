@@ -84,8 +84,9 @@ __protected_mode:
     call _setup_page
     call _load_kernel
 
-    mov eax, $
-    jmp eax
+    ; mov esp, KERNEL_STACK_ADDR
+
+    jmp $
 
 _setup_page:
     ; setup page
@@ -119,6 +120,7 @@ _setup_page:
 ; eax:  the entry address of kernel
 _load_kernel:
     enter 0,0
+    pushad
 
     ; read kernel.bin from disk into buffer.
     mov eax, KERNEL_START_SECTOR
@@ -127,8 +129,74 @@ _load_kernel:
     call _pdisk32_read_sectors
 
     ; parse kernel.bin and load it into kernel space.
+    xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx
+    xor edx, edx
 
+    ; get e_phentsize, the size of every program header.
+    mov dx, [KERNEL_BIN_ADDR + 42]
+    
+    ; get e_phoff, the offset of first program header.
+    mov dword ebx, [KERNEL_BIN_ADDR + 28]
 
+    ; get the address of first program header.
+    add ebx, KERNEL_BIN_ADDR  
+
+    ; e_phnum, the number of headers(segments)
+    mov cx, [KERNEL_BIN_ADDR + 44]
+
+    .each_segment:
+    cmp byte [ebx], 0   ; p_type, if is zero, skip
+    je .end
+
+    ;------copy memory-----
+    mov esi, [ebx + 4]  ; p_offset, the segmentation offset in current file.
+    add esi, KERNEL_BIN_ADDR
+    mov edi, [ebx + 8]  ; p_vaddr,  the virtual address of current segmentation in file.
+    push ecx
+    xor ecx, ecx
+    mov dword ecx, [ebx + 16] ; p_filesz, the size of current segmentation.
+
+    .nextb:
+    mov al, [esi]
+    mov [edi], al
+    inc esi
+    inc edi
+    loop .nextb
+
+    pop ecx
+    
+    .end:
+    
+    add ebx, edx        ; move to next segment
+    loop .each_segment
+
+    popad
+    leave
+
+    mov eax, KERNEL_BASE_ADDR
+
+    ret
+; esi: src
+; edi: dest
+; ecx: count
+memcopy:
+    enter 2,0
+    
+    mov al, [esi]
+    mov [edi], al
+    inc esi
+    inc edi
+
+    ; except
+    ; expect
+    ; expert
+
+    ; broad
+    ; borad
+    ; board
+    
     leave
     ret
 BOOTLOADER_HELLO:   db "Entering Protected Mode...", 0

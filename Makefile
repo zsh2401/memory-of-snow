@@ -2,7 +2,7 @@ image: mos.disk
 	@make -C ./boot
 	@make -C ./kernel
 	@dd if=boot/bootsector.bin of=mos.disk bs=512 count=1 conv=notrunc
-	@dd if=boot/bootloader.bin of=mos.disk bs=512 count=16 seek=2 conv=notrunc
+	@dd if=boot/bootloader.bin of=mos.disk bs=512 count=4 seek=2 conv=notrunc
 	@dd if=kernel/kernel.bin of=mos.disk bs=512 count=2048 seek=20 conv=notrunc
 	@file mos.disk
 
