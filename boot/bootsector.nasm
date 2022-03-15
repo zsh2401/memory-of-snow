@@ -44,4 +44,4 @@ _boot:
 
 MBR_MSG:    dd "Booloader loaded."
 times 510 -($-$$) db 0
-db 0x55,0xaa
+db 0x55 , 0xaa

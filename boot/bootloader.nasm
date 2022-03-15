@@ -11,6 +11,7 @@ org LOADER_BASE_ADDR
 
 jmp __bootloader
 
+; GDT Memory Area.
 GDT_BASE:   dd 0x00000000
             dd 0x00000000
             
@@ -84,9 +85,10 @@ __protected_mode:
     call _setup_page
     call _load_kernel
 
-    ; mov esp, KERNEL_STACK_ADDR
-
-    jmp $
+    mov esp, KERNEL_STACK_ADDR
+    mov ebp, esp
+    
+    jmp eax
 
 _setup_page:
     ; setup page
@@ -147,28 +149,24 @@ _load_kernel:
     mov cx, [KERNEL_BIN_ADDR + 44]
 
     .each_segment:
-    cmp byte [ebx], 0   ; p_type, if is zero, skip
-    je .end
+    cmp byte [ebx + 0], 1   ; p_type, if is zero, skip
+    jne .end
 
     ;------copy memory-----
-    mov esi, [ebx + 4]  ; p_offset, the segmentation offset in current file.
+    mov esi, [ebx + 4]      ; p_offset, the segmentation offset in current file.
     add esi, KERNEL_BIN_ADDR
-    mov edi, [ebx + 8]  ; p_vaddr,  the virtual address of current segmentation in file.
+
+    mov edi, [ebx + 8]      ; p_vaddr,  the virtual address of current segmentation in file.
+    
     push ecx
     xor ecx, ecx
     mov dword ecx, [ebx + 16] ; p_filesz, the size of current segmentation.
-
-    .nextb:
-    mov al, [esi]
-    mov [edi], al
-    inc esi
-    inc edi
-    loop .nextb
-
+    
+    call memcopy
+    
     pop ecx
     
     .end:
-    
     add ebx, edx        ; move to next segment
     loop .each_segment
 
@@ -178,26 +176,14 @@ _load_kernel:
     mov eax, KERNEL_BASE_ADDR
 
     ret
+
 ; esi: src
 ; edi: dest
 ; ecx: count
 memcopy:
-    enter 2,0
+    enter 0,0
     
-    mov al, [esi]
-    mov [edi], al
-    inc esi
-    inc edi
-
-    ; except
-    ; expect
-    ; expert
-
-    ; broad
-    ; borad
-    ; board
+    rep movsb
     
     leave
     ret
-BOOTLOADER_HELLO:   db "Entering Protected Mode...", 0
-GDT_LOADED:         db "GDT Loaded.",0

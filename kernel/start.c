@@ -31,6 +31,7 @@ void MemoryOfSnowOSEntry(KernelArgument* a)
 {
     /* data */
     while(TRUE){
+        __asm("movl $0x2401, %eax");
         __asm("hlt");
     }
 }
