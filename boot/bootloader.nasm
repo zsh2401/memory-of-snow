@@ -84,11 +84,19 @@ __protected_mode:
 
     call _setup_page
     call _load_kernel
+    call _prepare_kernel_argument
 
     mov esp, KERNEL_STACK_ADDR
     mov ebp, esp
-    
-    jmp eax
+
+    xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx
+    xor edx, edx
+    xor esi, esi
+    xor edi, edi
+
+    jmp KERNEL_BASE_ADDR
 
 _setup_page:
     ; setup page
@@ -177,6 +185,29 @@ _load_kernel:
 
     ret
 
+_prepare_kernel_argument:
+    enter 0,0
+    push ebx
+    push eax
+
+    mov ebx, KERNEL_ARGUMENT_ADDR
+    mov dword [ebx + 0], 0x2401
+    mov dword [ebx + 4], eax
+    mov dword [ebx + 8], 1
+    mov dword [ebx + 12], 0xffffffff
+    mov dword [ebx + 20], 512
+    mov dword [ebx + 24], KERNEL_BASE_ADDR
+    mov dword [ebx + 28], KERNEL_START_SECTOR
+    mov dword [ebx + 32], 0xb8000
+    mov dword [ebx + 36], gdt_ptr
+    mov dword [ebx + 40], PAGE_DIR_TABLE_ADDR
+    mov dword [ebx + 44], 0x1937
+
+    pop eax
+    pop ebx
+    leave
+    ret
+    
 ; esi: src
 ; edi: dest
 ; ecx: count

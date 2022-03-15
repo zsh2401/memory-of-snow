@@ -21,17 +21,20 @@ void MemoryOfSnowOSEntry(KernelArgument* a);
 void start(void)
 {
     KernelArgument *a = (KernelArgument*)KERNEL_ARGUMENT_ADDRESS
-    if(a->magic != 2401){
-        // OS kernel not loaded
+    if(a->magic == 0x2401 && a->magic_end == 0x1937){
+          MemoryOfSnowOSEntry(a);
+    }else{
+        __asm("movl $0x2401, %eax");
+        __asm("hlt");
     }
-    MemoryOfSnowOSEntry(a);
+  
 }
 
 void MemoryOfSnowOSEntry(KernelArgument* a)
 {
     /* data */
     while(TRUE){
-        __asm("movl $0x2401, %eax");
+        __asm("movl $0x9655, %eax");
         __asm("hlt");
     }
 }

@@ -21,7 +21,7 @@ KERNEL_BIN_SIZE:        equ     1 * 1024 * 1024    ; 1MB
 KERNEL_BIN_ADDR:        equ     0xc02C0000      ; virtual address
 KERNEL_STACK_ADDR:      equ     0xc03bffff      ; virtual address
 KERNEL_BASE_ADDR:       equ     0xc01c0000      ; virtual address
-
+KERNEL_ARGUMENT_ADDR:   equ     0xa000          ; physical address
 ;--------------paing related------------------
 PAGE_DIR_TABLE_ADDR:    equ     0x3C0000
 
