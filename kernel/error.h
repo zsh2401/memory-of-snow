@@ -1,3 +1,13 @@
+/**
+ * @file error.h
+ * @author Seymour Zhang (zsh2401@gmail.com)
+ * @brief Defines errors.
+ * @version 0.1
+ * @date 2022-03-15
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef __ERROR_H
 #define __ERROR_H
 #include "types.h"
@@ -20,4 +30,5 @@ typedef uint32_t error_t;
 #define F_ERROR_SEGMENTATION_FAULT 140
 #define F_ERROR_INVALID_ARGUMENT 141
 #define F_ERROR_INDEX_OUT_OF_RANGE 142
+#define F_ERROR_NOT_IMPLEMENTED 143
 #endif // !__ERROR_H

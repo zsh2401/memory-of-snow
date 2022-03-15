@@ -3,6 +3,8 @@
         "*.ejs": "html",
         "number.h": "c",
         "*.tcc": "c",
-        "tmgraph.h": "c"
+        "tmgraph.h": "c",
+        "io.h": "c",
+        "error.h": "c"
     }
 }

@@ -1,6 +1,6 @@
-OBJECTS=start.o tmgraph.o io.o
+OBJECTS=start.o tmgraph.o io.o mose.o
 CC=gcc 
-CFLAGS=-ffreestanding -m32 -fno-stack-protector
+CFLAGS=-ffreestanding -static-libgcc -lgcc -m32 -fno-stack-protector
 LINEKR=ld
 LDFLAGS=-m elf_i386 -T kernel.ld 
 

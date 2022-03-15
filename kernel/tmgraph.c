@@ -159,3 +159,22 @@ error_t TextModeGraph_MoveLine(int32_t delta, bool_t resetToStart)
     }
     TextModeGraph_SetCursor(cursor);
 }
+static char *nm = "0123456789abcdefghijklmnopqrstuvwxyz";
+error_t TextModeGraph_PutNumber(int64_t value, int32_t radix, byte_t foreground, byte_t background)
+{
+    // TODO
+    // char *b = "";
+    // value /= radix;
+    // int64_t m = value % radix;
+    // *b = nm[m];
+    // if (value != 0)
+    // {
+    //     TextModeGraph_PutNumber(value, radix, foreground, background);
+    // }
+    // else
+    // {
+    //     TextModeGraph_PutString(b, foreground, background);
+    // }
+    // TextModeGraph_PutString(nm[(int32_t)m], foreground, background);
+    return F_ERROR_NOT_IMPLEMENTED;
+}

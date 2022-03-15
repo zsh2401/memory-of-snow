@@ -13,5 +13,6 @@ error_t TextModeGraph_GetWidth(int32_t *width);
 error_t TextModeGraph_MoveLine(int32_t delta, bool_t resetToStart);
 error_t TextModeGraph_SetCursorVisibility(bool_t visible);
 error_t TextModeGraph_PutString(char *str, byte_t foreground, byte_t background);
+error_t TextModeGraph_PutNumber(int64_t value, int32_t radix, byte_t foreground, byte_t background);
 error_t TextModeGraph_Clear();
 #endif // !
