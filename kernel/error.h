@@ -18,4 +18,6 @@ typedef uint32_t error_t;
 #define F_ERROR_FATAL 138
 #define F_ERROR_DEVICE_FATAL 139
 #define F_ERROR_SEGMENTATION_FAULT 140
+#define F_ERROR_INVALID_ARGUMENT 141
+#define F_ERROR_INDEX_OUT_OF_RANGE 142
 #endif // !__ERROR_H

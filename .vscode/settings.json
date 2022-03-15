@@ -2,6 +2,7 @@
     "files.associations": {
         "*.ejs": "html",
         "number.h": "c",
-        "*.tcc": "c"
+        "*.tcc": "c",
+        "tmgraph.h": "c"
     }
 }

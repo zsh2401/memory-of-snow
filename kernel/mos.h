@@ -6,6 +6,5 @@
 
 #include "types.h"
 #include "kstring.h"
-#include "screen.h"
 
 #endif // ! w
