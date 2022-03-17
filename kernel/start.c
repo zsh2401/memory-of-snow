@@ -6,9 +6,4 @@ void start(void)
     {
         MemoryOfSnowOSEntry(a);
     }
-    else
-    {
-        __asm("movl $0x2401, %eax");
-        __asm("hlt");
-    }
 }

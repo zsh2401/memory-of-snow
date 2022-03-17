@@ -14,12 +14,18 @@
 #define SIZE 4096
 #define CHARS 2000
 static uint8_t *__vm = NULL_PTR;
-static int32_t __cursor = 0;
 static int32_t __width = 80;
-error_t TextModeGraph_Init(void *videoMemoryAddress)
+static CursorInfo __cinf;
+
+error_t TMG_Init(void *videoMemoryAddress)
 {
     __vm = (uint8_t *)videoMemoryAddress;
     __width = 80;
+
+    __cinf.start = 14;
+    __cinf.end = 15;
+    __cinf.position = 0;
+    __cinf.visibility = TRUE;
 
     byte_t low;
     byte_t high;
@@ -30,11 +36,11 @@ error_t TextModeGraph_Init(void *videoMemoryAddress)
     OutByte(0x3D4, 0x0E);
     InByte(0x3D5, &high);
 
-    __cursor = (((uint16_t)high) << 8) | low;
+    __cinf.position = (((uint16_t)high) << 8) | low;
 
     return F_OK;
 }
-error_t TextModeGraph_Put(int32_t position, char c, byte_t foreground, byte_t background)
+error_t TMG_Put(int32_t position, char c, byte_t foreground, byte_t background)
 {
     if (position < 0 || position > CHARS)
     {
@@ -44,53 +50,34 @@ error_t TextModeGraph_Put(int32_t position, char c, byte_t foreground, byte_t ba
     __vm[position * 2 + 1] = (background << 4) | (foreground & 0x0F);
     return F_OK;
 }
-error_t TextModeGraph_Clear()
+error_t TMG_Clear()
 {
     for (size_t i = 0; i < SIZE; i++)
     {
         __vm[i * 2] = 0;
         __vm[i * 2 + 1] = DEFAULT_ATTR;
     }
-    TextModeGraph_SetCursor(0);
+
+    CursorInfo cinf;
+    TMG_GetCursor(&cinf);
+    cinf.position = 0;
+    TMG_SetCursor(cinf);
+
     return F_OK;
 }
-error_t TextModeGraph_SetCursor(int32_t position)
+error_t TMG_SetCursor(CursorInfo updated)
 {
-    if (position < 0 || position > CHARS)
+    if (updated.position < 0 || updated.position > CHARS)
     {
         return F_ERROR_INDEX_OUT_OF_RANGE;
     }
 
     OutByte(0x03d4, 0x0f);
-    OutByte(0x03d5, (uint8_t)(position & 0xff));
+    OutByte(0x03d5, (uint8_t)(updated.position & 0xff));
     OutByte(0x03d4, 0x0e);
-    OutByte(0x03d5, (uint8_t)(position >> 8 & 0xff));
+    OutByte(0x03d5, (uint8_t)(updated.position >> 8 & 0xff));
 
-    __cursor = position;
-
-    return F_OK;
-}
-error_t TextModeGraph_GetCursor(int32_t *result)
-{
-    // byte_t low;
-    // byte_t high;
-
-    // OutByte(0x3D4, 0x0F);
-    // InByte(0x3D5, &low);
-
-    // OutByte(0x3D4, 0x0E);
-    // InByte(0x3D5, &high);
-
-    // int16_t fuck = high;
-    // fuck <<= 8;
-    // *result = fuck | low;
-
-    *result = __cursor;
-    return F_OK;
-}
-error_t TextModeGraph_SetCursorVisibility(bool_t visible)
-{
-    if (visible)
+    if (updated.visibility)
     {
         byte_t cursor_start = 14;
         byte_t cursor_end = 15;
@@ -109,72 +96,89 @@ error_t TextModeGraph_SetCursorVisibility(bool_t visible)
         OutByte(0x3D4, 0x0A);
         OutByte(0x3D5, 0x20);
     }
-}
-error_t TextModeGraph_MoveCurosr(int32_t delta)
-{
-    int32_t cursor;
-    TextModeGraph_GetCursor(&cursor);
-    cursor += delta;
-    if (cursor < 0)
-    {
-        cursor = 0;
-    }
-    else if (cursor > CHARS)
-    {
-        cursor = CHARS;
-    }
-    TextModeGraph_SetCursor(cursor);
+
+    __cinf = updated;
+
     return F_OK;
 }
-error_t TextModeGraph_PutString(char *str, byte_t foreground, byte_t background)
+error_t TMG_GetCursor(CursorInfo *result)
 {
-    int32_t cursor;
-    int32_t i;
+    // byte_t low;
+    // byte_t high;
 
-    TextModeGraph_GetCursor(&cursor);
+    // OutByte(0x3D4, 0x0F);
+    // InByte(0x3D5, &low);
 
-    for (i = 0; str[i] != 0; i++)
-    {
-        TextModeGraph_Put(cursor + i, str[i], foreground, background);
-    }
+    // OutByte(0x3D4, 0x0E);
+    // InByte(0x3D5, &high);
 
-    TextModeGraph_MoveCurosr(i);
+    // int16_t fuck = high;
+    // fuck <<= 8;
+    // *result = fuck | low;
+
+    *result = __cinf;
     return F_OK;
 }
-error_t TextModeGraph_GetWidth(int32_t *width)
+error_t TMG_MoveCursor(int32_t delta)
+{
+    CursorInfo cursor;
+    TMG_GetCursor(&cursor);
+    cursor.position += delta;
+    if (cursor.position < 0)
+    {
+        cursor.position = 0;
+    }
+    else if (cursor.position > CHARS)
+    {
+        cursor.position = CHARS;
+    }
+    TMG_SetCursor(cursor);
+    return F_OK;
+}
+error_t TMG_GetWidth(int32_t *width)
 {
     *width = __width;
     return F_OK;
 }
-error_t TextModeGraph_MoveLine(int32_t delta, bool_t resetToStart)
+error_t TMG_MoveLine(int32_t delta, bool_t resetToStart)
 {
-    int32_t cursor;
+    CursorInfo cursor;
     int32_t width;
-    TextModeGraph_GetCursor(&cursor);
-    TextModeGraph_GetWidth(&width);
-    cursor += delta * width;
+    TMG_GetCursor(&cursor);
+    TMG_GetWidth(&width);
+    cursor.position += delta * width;
     if (resetToStart)
     {
-        cursor -= cursor % width;
+        cursor.position -= cursor.position % width;
     }
-    TextModeGraph_SetCursor(cursor);
+    TMG_SetCursor(cursor);
 }
-static char *nm = "0123456789abcdefghijklmnopqrstuvwxyz";
-error_t TextModeGraph_PutNumber(int64_t value, int32_t radix, byte_t foreground, byte_t background)
+error_t TMG_Printf(char *fmt)
 {
-    // TODO
-    // char *b = "";
-    // value /= radix;
-    // int64_t m = value % radix;
-    // *b = nm[m];
-    // if (value != 0)
-    // {
-    //     TextModeGraph_PutNumber(value, radix, foreground, background);
-    // }
-    // else
-    // {
-    //     TextModeGraph_PutString(b, foreground, background);
-    // }
-    // TextModeGraph_PutString(nm[(int32_t)m], foreground, background);
-    return F_ERROR_NOT_IMPLEMENTED;
+    CursorInfo cinf;
+    int32_t width;
+
+    TMG_GetCursor(&cinf);
+    TMG_GetWidth(&width);
+    
+    for (int32_t i = 0; fmt[i] != 0; i++)
+    {
+        char current = fmt[i];
+        switch (current)
+        {
+        case '\b':
+            TMG_Put(--cinf.position, 0, TM_WHITE, TM_BLACK);
+            break;
+        case '\n':
+        case '\r':
+            cinf.position += 80;
+            // cinf.position = width * ((cinf.position / width) + 1);
+            break;
+        default:
+            TMG_Put(cinf.position++, current, TM_WHITE, TM_BLACK);
+            break;
+        }
+    }
+    TMG_SetCursor(cinf);
+    return F_OK;
 }

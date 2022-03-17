@@ -12,16 +12,19 @@
 #include "tmgraph.h"
 void MemoryOfSnowOSEntry(KernelArgument *a)
 {
-    TextModeGraph_Init(a->pTextModeVideoMemory);
-    TextModeGraph_Clear();
-    TextModeGraph_PutString("Memory of Snow Operating System.", TM_WHITE, TM_BLACK);
-    TextModeGraph_MoveLine(1, TRUE);
-    TextModeGraph_PutString("Hello, Kernel Space!", TM_WHITE, TM_BLACK);
-    TextModeGraph_PutNumber(10, 10, TM_WHITE, TM_BLACK);
+    TMG_Init(a->pTextModeVideoMemory);
+    TMG_Clear();
+    TMG_Printf("Memory of Snow Operating System.SB\b\b\n");
+    TMG_Printf("Hello, Kernel Space!");
+    // TextModeGraph_PutNumber(10, 10, TM_WHITE, TM_BLACK);
+
     /* data */
     while (TRUE)
     {
+#if RISCV
+#elif X86
         __asm("movl $0x9655, %eax");
         __asm("hlt");
+#endif
     }
 }
