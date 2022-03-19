@@ -14,7 +14,7 @@ void MemoryOfSnowOSEntry(KernelArgument *a)
 {
     TMG_Init(a->pTextModeVideoMemory);
     TMG_Clear();
-    TMG_Printf("Memory of Snow Operating System.SB\b\b\n");
+    TMG_Printf("Memory of Snow Operating System%c.SB\n",'a');
     TMG_Printf("Hello, Kernel Space!");
     // TextModeGraph_PutNumber(10, 10, TM_WHITE, TM_BLACK);
 

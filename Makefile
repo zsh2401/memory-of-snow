@@ -1,3 +1,8 @@
+RUNNER=qemu-system-i386
+RUNNER_OPTIONS=
+DEBUGGER=bochs
+DEBUGGER_OPTIONS=-q -f ./bochsrc
+
 image: mos.disk
 	@make -C ./boot
 	@make -C ./kernel
@@ -7,10 +12,10 @@ image: mos.disk
 	@file mos.disk
 
 debug: image
-	bochs -q -f ./bochsrc
+	@$(DEBUGGER) $(DEBUGGER_OPTIONS)
 	
 run: image
-	@qemu-system-i386 mos.disk
+	@$(RUNNER) $(RUNNER_OPTIONS) mos.disk
 
 mos.disk:
 	@bximage -func=create -imgmode=flat -sectsize=512 -hd=60M -q mos.disk

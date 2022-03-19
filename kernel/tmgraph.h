@@ -18,7 +18,7 @@ error_t TMG_SetCursor(CursorInfo updated);
 error_t TMG_GetCursor(CursorInfo *result);
 error_t TMG_MoveCursor(int32_t delta);
 error_t TMG_GetWidth(int32_t *width);
-error_t TMG_Printf(char *fmt);
+error_t TMG_Printf(const char *fmt, ...);
 // error_t TMG_MoveLine(int32_t delta, bool_t resetToStart);
 // error_t TextModeGraph_PutString(char *str, byte_t foreground, byte_t background);
 // error_t TextModeGraph_PutNumber(int64_t value, int32_t radix, byte_t foreground, byte_t background);

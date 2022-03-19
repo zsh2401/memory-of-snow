@@ -5,6 +5,8 @@
         "*.tcc": "c",
         "tmgraph.h": "c",
         "io.h": "c",
-        "error.h": "c"
+        "error.h": "c",
+        "stdarg.h": "c",
+        "stdio.h": "c"
     }
 }

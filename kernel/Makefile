@@ -1,4 +1,4 @@
-TOOLPERFIX=
+TOOLPERFIX=x86_64-elf-
 OBJECTS=start.o tmgraph.o io.o mose.o util.o
 CC=$(TOOLPERFIX)gcc 
 CFLAGS=-ffreestanding -m32 -D X86

@@ -11,6 +11,7 @@
  */
 #include "tmgraph.h"
 #include "io.h"
+#include "stdarg.h"
 #define SIZE 4096
 #define CHARS 2000
 static uint8_t *__vm = NULL_PTR;
@@ -153,14 +154,33 @@ error_t TMG_MoveLine(int32_t delta, bool_t resetToStart)
     }
     TMG_SetCursor(cursor);
 }
-error_t TMG_Printf(char *fmt)
+static error_t enterFormat(char *fmt, char *result, int32_t width, int *_index, va_list* ap)
 {
+    switch (fmt[++(*_index)])
+    {
+    case 'c':
+        result[0] = va_arg(*ap,char);
+        break;
+    case 'd':
+        break;
+    case '%':
+        result[0] = '%';
+        break;
+    default:
+        break;
+    }
+    return F_OK;
+}
+error_t TMG_Printf(const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
     CursorInfo cinf;
     int32_t width;
 
     TMG_GetCursor(&cinf);
     TMG_GetWidth(&width);
-    
+
     for (int32_t i = 0; fmt[i] != 0; i++)
     {
         char current = fmt[i];
@@ -171,8 +191,15 @@ error_t TMG_Printf(char *fmt)
             break;
         case '\n':
         case '\r':
-            cinf.position += 80;
-            // cinf.position = width * ((cinf.position / width) + 1);
+            cinf.position = width * ((cinf.position / width) + 1);
+            break;
+        case '%':
+            char buffer[20];
+            enterFormat(fmt, buffer, width, &i, &ap);
+            for (int k = 0; buffer[k] != 0; k++)
+            {
+                TMG_Put(cinf.position++, buffer[k], TM_WHITE, TM_BLACK);
+            }
             break;
         default:
             TMG_Put(cinf.position++, current, TM_WHITE, TM_BLACK);
