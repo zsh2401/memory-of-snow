@@ -1,0 +1,6 @@
+start.o
+mose.o
+io.ao
+text-mode/tmgraph.o
+third-party/libcc/div.o
+utils/sprintf.o

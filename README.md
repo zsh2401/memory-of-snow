@@ -9,3 +9,5 @@ You need GNU Complier Chain, nasm, bochs and qemu-system-i386
 ```shell
 make run #or make debug
 ```
+## References
+- 操作系统真象还原

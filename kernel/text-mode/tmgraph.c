@@ -9,9 +9,10 @@
  *
  * https://wiki.osdev.org/Text_Mode_Cursor
  */
-#include "tmgraph.h"
-#include "io.h"
-#include "stdarg.h"
+#include <std/stdarg.h>
+#include <tmgraph.h>
+#include <io.h>
+#include <sprintf.h>
 #define SIZE 4096
 #define CHARS 2000
 static uint8_t *__vm = NULL_PTR;
@@ -154,37 +155,47 @@ error_t TMG_MoveLine(int32_t delta, bool_t resetToStart)
     }
     TMG_SetCursor(cursor);
 }
-static error_t enterFormat(char *fmt, char *result, int32_t width, int *_index, va_list* ap)
-{
-    switch (fmt[++(*_index)])
-    {
-    case 'c':
-        result[0] = va_arg(*ap,char);
-        break;
-    case 'd':
-        break;
-    case '%':
-        result[0] = '%';
-        break;
-    default:
-        break;
-    }
-    return F_OK;
-}
+// static error_t enterFormat(char *fmt, char *result, int32_t width, int *_index, va_list ap)
+// {
+//     switch (fmt[++(*_index)])
+//     {
+//     case 'c':
+//         result[0] = va_arg(ap, char);
+//         result[1] = 0;
+//         break;
+//     case 'd':
+//         break;
+//     case '%':
+//         result[0] = '%';
+//         result[1] = 0;
+//         break;
+//     default:
+//         break;
+//     }
+//     return F_OK;
+// }
+/**
+ * @brief Just like c printf function....
+ * You can use %d, \n, %%
+ *
+ * @param fmt
+ * @param ...
+ * @return error_t
+ */
 error_t TMG_Printf(const char *fmt, ...)
 {
-    va_list ap;
-    va_start(ap, fmt);
+    char buffer[1024];
+    sprintf(buffer, fmt);
     CursorInfo cinf;
     int32_t width;
 
     TMG_GetCursor(&cinf);
     TMG_GetWidth(&width);
 
-    for (int32_t i = 0; fmt[i] != 0; i++)
+    for (int32_t i = 0; buffer[i] != 0; i++)
     {
-        char current = fmt[i];
-        switch (current)
+        char crt = buffer[i];
+        switch (crt)
         {
         case '\b':
             TMG_Put(--cinf.position, 0, TM_WHITE, TM_BLACK);
@@ -192,20 +203,52 @@ error_t TMG_Printf(const char *fmt, ...)
         case '\n':
         case '\r':
             cinf.position = width * ((cinf.position / width) + 1);
-            break;
-        case '%':
-            char buffer[20];
-            enterFormat(fmt, buffer, width, &i, &ap);
-            for (int k = 0; buffer[k] != 0; k++)
-            {
-                TMG_Put(cinf.position++, buffer[k], TM_WHITE, TM_BLACK);
-            }
+            // TMG_Put(cinf.position++, 'q', TM_WHITE, TM_BLACK);
             break;
         default:
-            TMG_Put(cinf.position++, current, TM_WHITE, TM_BLACK);
+            TMG_Put(cinf.position++, crt, TM_WHITE, TM_BLACK);
             break;
         }
     }
     TMG_SetCursor(cinf);
     return F_OK;
 }
+// error_t TMG_Printf(const char *fmt, ...)
+// {
+//     va_start(ap, fmt);
+
+//     CursorInfo cinf;
+//     int32_t width;
+
+//     TMG_GetCursor(&cinf);
+//     TMG_GetWidth(&width);
+
+//     for (int32_t i = 0; fmt[i] != 0; i++)
+//     {
+//         char current = fmt[i];
+//         switch (current)
+//         {
+//         case '\b':
+//             TMG_Put(--cinf.position, 0, TM_WHITE, TM_BLACK);
+//             break;
+//         case '\n':
+//         case '\r':
+//             cinf.position = width * ((cinf.position / width) + 1);
+//             break;
+//         case '%':
+//             char buffer[20];
+//             enterFormat(fmt, buffer, width, &i, ap);
+//             for (int k = 0; buffer[k] != 0; k++)
+//             {
+//                 TMG_Put(cinf.position++, buffer[k], TM_WHITE, TM_BLACK);
+//             }
+//             break;
+//         default:
+//             TMG_Put(cinf.position++, current, TM_WHITE, TM_BLACK);
+//             break;
+//         }
+//     }
+//     TMG_SetCursor(cinf);
+//     va_end(ap);
+//     return F_OK;
+// }

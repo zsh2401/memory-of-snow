@@ -1,42 +1,26 @@
 ; use BIOS interrupt 0XE820 to
-; read memory size. Max recognizable size: Almost infinite.
+; read memory size. Max recognizable size: Max of int64
 ; eax: memsize (KB) 
 _detect_get_mem64:
     enter 24,0
 
-    ; TODO
-    call _detect_get_mem32
-    
-    ; [ebp - 24] ARDS buffer, len 20B
-    ; [ebp - 4]  mem size local variable
-    
-    ; mov ebx,    ebp
-    ; sub ebx, 24
-    ; mov edi,    ebx
-
-    ; xor ebx,    ebx
-
-    ; mov edx,    0x534d4150
-
-    ; .intr:
-    ; mov eax,    0xE820
-    ; mov ecx,    20
-    ; int 0x15
-    
-    ; cmp ebx, 0
-    ; jne .intr
-    
     
     leave
     ret
 
 ; use BIOS interrupt 0XE801 to
 ; read memory size. Max recognizable size: 4GB
-; eax: memsize (KB) 
+; eax: memsize in bytes (low) 
+; ebx: memsize in bytes (high)
 _detect_get_mem32:
     enter 4,0
+    push ecx
+    push edx
 
     xor eax, eax
+    xor ebx, ebx
+    xor ecx, ecx
+    xor edx, edx
 
     mov eax, 0XE801
     int 0x15    ;   interrupt
@@ -48,6 +32,8 @@ _detect_get_mem32:
 
     add eax,    [ebp - 4]
 
+    pop ecx
+    pop edx
     leave
     ret
 

@@ -4,7 +4,7 @@
 #define MOS_VERSION_CODE 1
 #define MOS_VERSION_NAME "dream"
 
-#include "types.h"
-#include "kstring.h"
+#include <types.h>
+#include <kstring.h>
 
 #endif // ! w

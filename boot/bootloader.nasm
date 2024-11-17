@@ -6,6 +6,7 @@
 ; Seymour Zhang <zsh2401@163.com>
 ; March 7, 2022
 ;
+
 %include "boot.inc"
 org LOADER_BASE_ADDR
 
@@ -40,8 +41,8 @@ gdt_ptr:        dw  GDT_LIMIT
 memsizekb:  dd 0
 __bootloader:
 
-    call _detect_get_mem64
-    mov [memsizekb], eax
+    ; call _detect_get_mem32
+    ; mov [memsizekb], eax
     
     ; Entering Protected Mode
     ; Step 1. Enable A20
@@ -89,6 +90,7 @@ __protected_mode:
     mov esp, KERNEL_STACK_ADDR
     mov ebp, esp
 
+    ; 清空寄存器
     xor eax, eax
     xor ebx, ebx
     xor ecx, ecx
@@ -191,17 +193,18 @@ _prepare_kernel_argument:
     push eax
 
     mov ebx, KERNEL_ARGUMENT_ADDR
+    mov eax, [memsizekb]
     mov dword [ebx + 0], 0x2401
-    mov dword [ebx + 4], eax
-    mov dword [ebx + 8], 1
-    mov dword [ebx + 12], 0xffffffff
-    mov dword [ebx + 20], 512
-    mov dword [ebx + 24], KERNEL_BASE_ADDR
-    mov dword [ebx + 28], KERNEL_START_SECTOR
-    mov dword [ebx + 32], 0xb8000
-    mov dword [ebx + 36], gdt_ptr
-    mov dword [ebx + 40], PAGE_DIR_TABLE_ADDR
-    mov dword [ebx + 44], 0x1937
+    mov dword [ebx + 4], 1
+    mov dword [ebx + 12], 1
+    mov dword [ebx + 16], 0xffffffff
+    mov dword [ebx + 24], 512
+    mov dword [ebx + 28], KERNEL_BASE_ADDR
+    mov dword [ebx + 32], KERNEL_START_SECTOR
+    mov dword [ebx + 36], 0xb8000
+    mov dword [ebx + 40], gdt_ptr
+    mov dword [ebx + 44], PAGE_DIR_TABLE_ADDR
+    mov dword [ebx + 48], 0x1937
 
     pop eax
     pop ebx
