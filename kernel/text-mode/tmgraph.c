@@ -184,8 +184,10 @@ error_t TMG_MoveLine(int32_t delta, bool_t resetToStart)
  */
 error_t TMG_Printf(const char *fmt, ...)
 {
+    va_list ap;
+    va_start(ap, fmt);
     char buffer[1024];
-    sprintf(buffer, fmt);
+    vsnprintf_(buffer, (size_t)-1,fmt, ap);
     CursorInfo cinf;
     int32_t width;
 

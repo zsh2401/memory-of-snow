@@ -14,10 +14,10 @@ void MemoryOfSnowOSEntry(KernelArgument *a)
 {
     TMG_Init(a->pTextModeVideoMemory);
     TMG_Clear();
-    // TMG_Printf("\n\n\n");
+    TMG_Printf("\n\n\n");
     TMG_Printf("Memory of Snow Operating System by Seymour Zhang Oct 31, 2023\n");
     TMG_Printf("Hello, Kernel Space! \n");
-    TMG_Printf("Is there anybody?%d\n",2401);
+    TMG_Printf("Is there anybody?%c\n",'a');
     // TMG_Clear();
     // TMG_Printf("Hello, Kernel Space!");
     // TMG_Printf("Hello, Kernel Space!");

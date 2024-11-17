@@ -31,10 +31,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <sprintf.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdarg.h>
-#include <stdint.h>
+#include <types.h>
+// #include <stddef.h>
+#include <std/stdbool.h>
+// #include <stdarg.h>
+// #include <stdint.h>
 
 
 // define this globally (e.g. gcc -DPRINTF_INCLUDE_CONFIG_H ...) to include the
