@@ -41,8 +41,9 @@ gdt_ptr:        dw  GDT_LIMIT
 memsizekb:  dd 0
 __bootloader:
 
-    ; call _detect_get_mem32
-    ; mov [memsizekb], eax
+    call _detect_get_mem32
+    shl eax, 10
+    mov [memsizekb], eax
     
     ; Entering Protected Mode
     ; Step 1. Enable A20
@@ -195,7 +196,7 @@ _prepare_kernel_argument:
     mov ebx, KERNEL_ARGUMENT_ADDR
     mov eax, [memsizekb]
     mov dword [ebx + 0], 0x2401
-    mov dword [ebx + 4], 1
+    mov dword [ebx + 4], eax
     mov dword [ebx + 12], 1
     mov dword [ebx + 16], 0xffffffff
     mov dword [ebx + 24], 512
