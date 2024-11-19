@@ -43,7 +43,7 @@ __bootloader:
 
     call _detect_get_mem32
     shl eax, 10
-    mov [memsizekb], eax
+    mov [memsizekb], eax 
     
     ; Entering Protected Mode
     ; Step 1. Enable A20
@@ -60,11 +60,12 @@ __bootloader:
     ; Load GDT
     lgdt    [gdt_ptr]
 
-    ; enable protected mode
+    ; Enabling protected mode
     mov eax, cr0
     or al, 1
     mov cr0, eax
 
+    ; Go to protected mode now.
     jmp dword   SELECTOR_CODE:__protected_mode
 
 [bits 32]
@@ -84,14 +85,20 @@ __protected_mode:
 
     mov byte [gs:160], 'P'
 
+    ; Setup page table
     call _setup_page
+
+    ; Load kernel from disk into memory
     call _load_kernel
+
+    ; Prepare necessary argument for kernel
     call _prepare_kernel_argument
 
+    ; Adjust stack pointer to designed place
     mov esp, KERNEL_STACK_ADDR
     mov ebp, esp
 
-    ; 清空寄存器
+    ; Clear registers for further usage.
     xor eax, eax
     xor ebx, ebx
     xor ecx, ecx
@@ -99,10 +106,12 @@ __protected_mode:
     xor esi, esi
     xor edi, edi
 
+    ; Enter C kernel code under protected mode.
     jmp KERNEL_BASE_ADDR
 
+; Setup two level page
 _setup_page:
-    ; setup page
+    ; initial page strucutre in memory
     mov edi, PAGE_DIR_TABLE_ADDR
     call _paging_init3
 
@@ -116,6 +125,7 @@ _setup_page:
     add dword [gdt_ptr + 2], 0xc000_0000
     add esp, 0xc000_0000
 
+    ; tell the machine where the page table is
     mov eax, PAGE_DIR_TABLE_ADDR
     mov cr3, eax
 
@@ -137,7 +147,7 @@ _load_kernel:
 
     ; read kernel.bin from disk into buffer.
     mov eax, KERNEL_START_SECTOR
-    mov ebx, KERNEL_BIN_ADDR
+    mov ebx, KERNEL_BIN_ADDR ; _pdisk32_read_sectors will write all binary data to ebx address
     mov ecx, KERNEL_USED_SECTOR
     call _pdisk32_read_sectors
 
