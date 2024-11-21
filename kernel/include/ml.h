@@ -2,8 +2,8 @@
 #define __ML_H
 #define SUCCESS 0
 #define ERROR 1
-#include <types.h>
-#include <error.h>
+#include <mos/types.h>
+#include <mos/error.h>
 
 typedef void *(*MLMalloc)(size_t);
 typedef void *(*MLFree)(void *);
@@ -58,18 +58,9 @@ typedef struct _MLCreateArgs
  * @return error_t 
  */
 error_t ML_Create(MLCreateArgs args, ML_Context* poutput);
-/**
- * @brief 
- * 
- * @param context 
- * @param dims 
- * @param ndim 
- * @param poutput 
- * @return error_t 
- */
 error_t ML_CreateZeroTensor(ML_Context* context, size_t *dims, size_t ndim, ML_Tensor* poutput);
 error_t ML_FreeTensor(ML_Context* context,ML_Tensor** tensor);
 error_t ML_ReLU(ML_Context* context, ML_Tensor* input, ML_Context** output);
 Scalar ML_F_ReLU(Scalar scalar);
 error_t ML_Mul(ML_Context* context,ML_Tensor a,ML_Tensor b, ML_Context** output);
-#endif 6
+#endif

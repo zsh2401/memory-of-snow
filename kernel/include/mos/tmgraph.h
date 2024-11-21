@@ -1,7 +1,7 @@
 #ifndef __TM_GRAPH_H
 #define __TM_GRAPH_H
-#include <error.h>
-#include <types.h>
+#include <mos/error.h>
+#include <mos/types.h>
 #define DEFAULT_ATTR 0b00000111
 #define TM_WHITE 0b0111
 #define TM_BLACK 0b0000

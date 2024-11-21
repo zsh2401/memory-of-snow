@@ -10,7 +10,7 @@
  */
 #ifndef __ERROR_H
 #define __ERROR_H
-#include <types.h>
+#include <mos/types.h>
 typedef uint32_t error_t;
 #define F_OK 0
 #define F_ERROR 1

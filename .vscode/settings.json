@@ -13,6 +13,9 @@
         "stddef.h": "c",
         "sprintf.h": "c",
         "mose.h": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "kstring.h": "c",
+        "mos.h": "c",
+        "ml.h": "c"
     }
 }

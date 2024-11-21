@@ -32,8 +32,8 @@
 #ifndef _PRINTF_H_
 #define _PRINTF_H_
 
-#include <std/stdarg.h>
-#include <types.h>
+#include <stdarg.h>
+#include <mos/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

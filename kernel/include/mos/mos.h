@@ -6,5 +6,6 @@
 
 #include <types.h>
 #include <kstring.h>
+#include <error.h>
 
 #endif // ! w

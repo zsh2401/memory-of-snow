@@ -9,10 +9,10 @@
  *
  * https://wiki.osdev.org/Text_Mode_Cursor
  */
-#include <std/stdarg.h>
-#include <tmgraph.h>
-#include <io.h>
-#include <sprintf.h>
+#include <stdarg.h>
+#include <mos/tmgraph.h>
+#include <mos/io.h>
+#include <mos/sprintf.h>
 #define SIZE 4096
 #define CHARS 2000
 static uint8_t *__vm = NULL_PTR;
