@@ -6,3 +6,4 @@ third-party/libcc/ccpo.o
 utils/sprintf.o
 utils/simd.o
 ml/ml.o
+utils/memcopy.o

@@ -25,7 +25,7 @@ void MemoryOfSnowOSEntry(KernelArgument *a)
     if (simd_supported())
     {
         enable_sse();
-        test_sse();
+        // test_sse();
         TMG_Printf("SSE enabled");
     }else{
         TMG_Printf("No SSE");

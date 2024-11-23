@@ -6,10 +6,6 @@ Scalar ML_F_ReLU(Scalar x)
 {
     return x > 0 ? x : 0;
 }
-size_t tensor_length(ML_Tensor tensor)
-{
-    return tensor_length2(tensor->dims, tensor->ndim);
-}
 size_t tensor_length2(size_t *dims, size_t ndim)
 {
     if (ndim == 0)
@@ -23,6 +19,11 @@ size_t tensor_length2(size_t *dims, size_t ndim)
     }
     return result;
 }
+size_t tensor_length(ML_Tensor tensor)
+{
+    return tensor_length2(tensor->dims, tensor->ndim);
+}
+
 error_t ML_CreateZeroTensor(ML_Context context, size_t *dims, size_t ndim, ML_Tensor *output)
 {
     size_t size = tensor_length2(dims, ndim);
