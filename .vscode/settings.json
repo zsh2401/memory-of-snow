@@ -16,6 +16,14 @@
         "cstdio": "c",
         "kstring.h": "c",
         "mos.h": "c",
-        "ml.h": "c"
+        "ml.h": "c",
+        "mfeat.h": "c",
+        "__locale": "c",
+        "simd.h": "c",
+        "mm.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "vector": "c"
     }
 }

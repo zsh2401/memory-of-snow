@@ -1,5 +1,5 @@
 RUNNER=qemu-system-i386
-RUNNER_OPTIONS=-m 128m
+RUNNER_OPTIONS=-m 512m -cpu pentium3,+sse2,+sse3
 DEBUGGER=bochs
 DEBUGGER_OPTIONS=-q -f ./bochsrc
 

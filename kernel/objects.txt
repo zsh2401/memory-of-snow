@@ -2,6 +2,7 @@ start.o
 mose.o
 io.ao
 text-mode/tmgraph.o
-third-party/libcc/div.o
+third-party/libcc/ccpo.o
 utils/sprintf.o
+utils/simd.o
 ml/ml.o

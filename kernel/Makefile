@@ -1,10 +1,12 @@
 TOOLPERFIX=i686-elf-
 OBJECTS=$(shell cat objects.txt)
 CC=$(TOOLPERFIX)gcc 
-CFLAGS=-ffreestanding -m32 -D X86
-CFLAGS+=-static-libgcc -lgcc -nostdlib
-CFLAGS+=-fno-stack-protector
-CFLAGS+=-Iinclude
+COMMON_CFLAGS=-ffreestanding -m32 -msse -D X86 
+COMMON_CFLAGS+=-static-libgcc -lgcc -nostdlib
+COMMON_CFLAGS+=-fno-stack-protector
+COMMON_CFLAGS+=-Iinclude
+CFLAGS=${COMMON_CFLAGS} -O2
+ML_CFLAGS=${COMMON_CFLAGS} -O3 -ftree-vectorize -fopt-info
 LINEKR=$(TOOLPERFIX)ld
 LDFLAGS=-m elf_i386 -T kernel.ld
 ASSEMBLER=nasm
@@ -17,12 +19,17 @@ kernel.bin: $(OBJECTS)
 %.ao: %.nasm
 	$(ASSEMBLER) $(ASFLAG) -o $@ $^
 	@file $@
+
+ml/%.o: ml/%.c
+	$(CC) $(ML_CFLAGS) -c $< -o $@
+
 %.o : %.c
 	@echo "--- Object $@ Building---"
 	$(CC) $(CFLAGS) -c $< -o $@
 	@file $@
 	@ls -lh $@
 	@echo "--- Object $@ Built---"
+
 .PHONY: clean
 clean:
 	-rm kernel.bin

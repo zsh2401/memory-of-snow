@@ -1,6 +1,6 @@
 #ifndef __MOSE_H
 #define __MOSE_H
-#include <mos.h>
+#include <mos/mos.h>
 /**
  * The bootloader should put information to
  * 0xA000 area.
